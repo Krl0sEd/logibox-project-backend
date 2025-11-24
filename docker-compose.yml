@@ -34,6 +34,8 @@ services:
       - "80:80"
     depends_on:
       - db
+    volumes:
+      - ./www:/var/www/html
 
 volumes:
   db_data:

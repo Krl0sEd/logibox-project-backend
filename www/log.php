@@ -1,4 +1,23 @@
 <?php
+
+// ----- INÍCIO DO CÓDIGO DE DEBUG -----
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
+// ----- FIM DO CÓDIGO DE DEBUG -----
+
+
+// ----- INÍCIO DO CÓDIGO DE PERMISSÃO (CORS) -----
+header("Access-Control-Allow-Origin: *");
+header("Access-Control-Allow-Methods: GET, POST, OPTIONS");
+header("Access-Control-Allow-Headers: Content-Type, Authorization, X-Requested-With");
+
+if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
+    http_response_code(204);
+    exit;
+}
+// ----- FIM DO CÓDIGO DE PERMISSÃO (CORS) -----
+
 header("Content-Type: application/json; charset=UTF-8");
 
 $host = "db";
