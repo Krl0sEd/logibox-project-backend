@@ -1,15 +1,16 @@
 <?php
+date_default_timezone_set('America/Sao_Paulo');
 
 // ----- INÍCIO DO CÓDIGO DE DEBUG -----
-// ini_set('display_errors', 1);
-// ini_set('display_startup_errors', 1);
-// error_reporting(E_ALL);
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
 // ----- FIM DO CÓDIGO DE DEBUG -----
 
 
 // ----- INÍCIO DO CÓDIGO DE PERMISSÃO (CORS) -----
 header("Access-Control-Allow-Origin: *");
-header("Access-Control-Allow-Methods: GET, POST, OPTIONS");
+header("Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS");
 header("Access-Control-Allow-Headers: Content-Type, Authorization, X-Requested-With");
 
 if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
@@ -112,6 +113,72 @@ if ($method === 'POST') {
     } else {
         http_response_code(500);
         echo json_encode(["error" => "Erro no cadastro do produto: " . $stmt->error]);
+    }
+
+    $stmt->close();
+    $conn->close();
+    exit;
+}
+
+if ($method === 'PUT') {
+    $id_produto = $data["id_produto"] ?? null;
+    $nome_produto = $data["nome_produto"] ?? null;
+    $descricao = $data["descricao"] ?? null;
+    $categoria = $data["categoria"] ?? null;
+    $preco_unitario = $data["preco_unitario"] ?? null;
+    $quantidade_estoque = $data["quantidade_estoque"] ?? null;
+
+    if (!$id_produto || !$nome_produto || !$descricao || !$categoria || !$preco_unitario || !$quantidade_estoque) {
+        http_response_code(400);
+        die(json_encode(["error" => "Dados incompletos para atualização."]));
+    }
+
+    $sql = "UPDATE Estoque SET nome_produto=?, descricao=?, categoria=?, preco_unitario=?, quantidade_estoque=? WHERE id_produto=?";
+    $stmt = $conn->prepare($sql);
+
+    if (!$stmt) {
+        http_response_code(500);
+        die(json_encode(["error" => "Erro na preparação do UPDATE: " . $conn->error]));
+    }
+
+    $stmt->bind_param("sssssi", $nome_produto, $descricao, $categoria, $preco_unitario, $quantidade_estoque, $id_produto);
+
+    if ($stmt->execute()) {
+        echo json_encode(["sucesso" => "Produto atualizado com sucesso!"]);
+    } else {
+        http_response_code(500);
+        echo json_encode(["error" => "Erro ao atualizar: " . $stmt->error]);
+    }
+
+    $stmt->close();
+    $conn->close();
+    exit;
+}
+
+if ($method === 'DELETE') {
+    // Vamos pegar o ID pela URL (ex: estoque.php?id_produto=10)
+    $id_produto = $_GET['id_produto'] ?? null;
+
+    if (!$id_produto) {
+        http_response_code(400);
+        die(json_encode(["error" => "ID do produto é obrigatório para exclusão."]));
+    }
+
+    $sql = "DELETE FROM Estoque WHERE id_produto = ?";
+    $stmt = $conn->prepare($sql);
+
+    if (!$stmt) {
+        http_response_code(500);
+        die(json_encode(["error" => "Erro na preparação do DELETE: " . $conn->error]));
+    }
+
+    $stmt->bind_param("i", $id_produto);
+
+    if ($stmt->execute()) {
+        echo json_encode(["sucesso" => "Produto excluído com sucesso!"]);
+    } else {
+        http_response_code(500);
+        echo json_encode(["error" => "Erro ao excluir: " . $stmt->error]);
     }
 
     $stmt->close();

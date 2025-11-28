@@ -1,4 +1,5 @@
 <?php
+date_default_timezone_set('America/Sao_Paulo');
 
 // ----- INÍCIO DO CÓDIGO DE DEBUG -----
 ini_set('display_errors', 1);
