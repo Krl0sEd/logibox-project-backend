@@ -6,6 +6,11 @@ O backend expõe endpoints responsáveis por funcionalidades como **cadastro de 
 
 ---
 
+## 🎬 Demonstração do Projeto
+
+[![Assista ao vídeo](https://img.youtube.com/vi/CQKah2Mv-3o/maxresdefault.jpg)](https://youtube.com/watch?v=CQKah2Mv-3o)
+
+
 ## 🚀 Tecnologias Utilizadas
 
 - PHP 8 + Apache
